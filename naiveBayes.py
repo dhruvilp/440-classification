@@ -39,7 +39,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     # this is a list of all features in the training set.
     self.features = list(set([ f for datum in trainingData for f in datum.keys() ]));
     
-    if (self.automaticTuning):
+    if self.automaticTuning:
         kgrid = [0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 50]
     else:
         kgrid = [self.k]
@@ -89,6 +89,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     logJoint = util.Counter()
     
     "*** YOUR CODE HERE ***"
+
     util.raiseNotDefined()
     
     return logJoint
@@ -96,8 +97,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
   def findHighOddsFeatures(self, label1, label2):
     """
     Returns the 100 best features for the odds ratio:
-            P(feature=1 | label1)/P(feature=1 | label2) 
-    
+            P(feature=1 | label1)/P(feature=1 | label2)
     Note: you may find 'self.features' a useful way to loop through all possible features
     """
     featuresOdds = []
@@ -106,7 +106,3 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     util.raiseNotDefined()
 
     return featuresOdds
-    
-
-    
-      
