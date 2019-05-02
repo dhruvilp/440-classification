@@ -12,10 +12,13 @@
 import mostFrequent
 import naiveBayes
 import perceptron
+import nearestNeighbors
 import mira
 import samples
 import sys
 import util
+import time
+start_time = time.time()
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH = 28
@@ -72,6 +75,16 @@ def enhancedFeatureExtractorDigit(datum):
     features = basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
+
+    features = util.Counter()
+
+    for y in range(DIGIT_DATUM_HEIGHT):
+        for x in range(DIGIT_DATUM_WIDTH):
+            features[('r', y)] += 1 if features[(x, y)] > 0 else 0
+
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+            features[('c', x)] += 1 if features[(x, y)] > 0 else 0
 
     return features
 
