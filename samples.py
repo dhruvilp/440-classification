@@ -146,11 +146,11 @@ def asciiGrayscaleConversionFunction(value):
     """
   Helper function for display purposes.
   """
-    if (value == 0):
+    if value == 0:
         return ' '
-    elif (value == 1):
+    elif value == 1:
         return '+'
-    elif (value == 2):
+    elif value == 2:
         return '#'
 
 
@@ -158,11 +158,11 @@ def IntegerConversionFunction(character):
     """
   Helper function for file reading.
   """
-    if (character == ' '):
+    if character == ' ':
         return 0
-    elif (character == '+'):
+    elif character == '+':
         return 1
-    elif (character == '#'):
+    elif character == '#':
         return 2
 
 
