@@ -18,6 +18,7 @@ import samples
 import sys
 import util
 import time
+
 start_time = time.time()
 
 TEST_SET_SIZE = 100
@@ -180,12 +181,13 @@ def default(str):
 
 
 def readCommand(argv):
-    "Processes the command used to run from the command line."
+    """Processes the command used to run from the command line."""
     from optparse import OptionParser
     parser = OptionParser(USAGE_STRING)
 
     parser.add_option('-c', '--classifier', help=default('The type of classifier'),
-                      choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron', 'mira', 'minicontest'],
+                      choices=['mostFrequent', 'nb', 'naiveBayes', 'nearestNeighbors', 'perceptron', 'mira',
+                               'minicontest'],
                       default='mostFrequent')
     parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
     parser.add_option('-t', '--training', help=default('The size of the training set'), default=100, type="int")
@@ -202,6 +204,8 @@ def readCommand(argv):
                       action="store_true")
     parser.add_option('-i', '--iterations', help=default("Maximum iterations to run training"), default=3, type="int")
     parser.add_option('-s', '--test', help=default("Amount of test data to use"), default=TEST_SET_SIZE, type="int")
+    parser.add_option('-n', '--k_number_of_neighbors',
+                      help=default("Number of neighbors to search (For nearestNeighbors)"), default=3, type="int")
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0: raise Exception('Command line input not understood: ' + str(otherjunk))
@@ -236,7 +240,7 @@ def readCommand(argv):
         print(USAGE_STRING)
         sys.exit(2)
 
-    if (options.data == "digits"):
+    if options.data == "digits":
         legalLabels = range(10)
     else:
         legalLabels = range(2)
@@ -257,8 +261,15 @@ def readCommand(argv):
             print(USAGE_STRING)
             sys.exit(2)
 
+    if options.k_number_of_neighbors <= 0:
+        print("Please provide a positive number for neighbors (you provided: %f)" % options.k_number_of_neighbors)
+        print(USAGE_STRING)
+        sys.exit(2)
+
     if options.classifier == "mostFrequent":
         classifier = mostFrequent.MostFrequentClassifier(legalLabels)
+    elif options.classifier == "nearestNeighbors":
+        classifier = nearestNeighbors.NNClassifier(legalLabels)
     elif options.classifier == "naiveBayes" or options.classifier == "nb":
         classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
         classifier.setSmoothing(options.smoothing)
@@ -341,20 +352,29 @@ def runClassifier(args, options):
     trainingData = map(featureFunction, rawTrainingData)
     validationData = map(featureFunction, rawValidationData)
     testData = map(featureFunction, rawTestData)
+    if options.k_number_of_neighbors > 0:
+        k = options.k_number_of_neighbors
 
     # Conduct training and testing
     print("Training...")
-    classifier.train(trainingData, trainingLabels, validationData, validationLabels)
-    print("Validating...")
-    guesses = classifier.classify(validationData)
-    correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
-    print(str(correct),
-          ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
-    print("Testing...")
-    guesses = classifier.classify(testData)
-    correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
-    print(str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels)))
-    analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
+    if options.classifier == 'nearestNeighbors':
+        classifier.train(trainingData, trainingLabels, testData, testLabels, options.k_number_of_neighbors)
+    else:
+        classifier.train(trainingData, trainingLabels, validationData, validationLabels)
+
+    if options.classifier != 'nearestNeighbors':
+        print("Validating...")
+        guesses = classifier.classify(validationData)
+        correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
+        print(str(correct),
+              ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (
+                          100.0 * correct / len(validationLabels)))
+        print("Testing...")
+        guesses = classifier.classify(testData)
+        correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+        print(str(correct),
+              ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels)))
+        analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 
     # do odds ratio computation if specified at command line
     if options.odds & (options.classifier == "naiveBayes" or (options.classifier == "nb")):
@@ -380,3 +400,4 @@ if __name__ == '__main__':
     args, options = readCommand(sys.argv[1:])
     # Run classifier
     runClassifier(args, options)
+    print("--- %s seconds ---" % (time.time() - start_time))
