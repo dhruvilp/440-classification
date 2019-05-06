@@ -2,6 +2,7 @@ import math
 import util
 import random
 import operator
+import classificationMethod
 
 PRINT = True
 
@@ -12,9 +13,11 @@ class NNClassifier:
     """
 
     def __init__(self, legalLabels):
+        self.condProb = None
         self.legalLabels = legalLabels
         self.type = "nearestneighbors"
         self.weights = {}
+
         for label in legalLabels:
             self.weights[label] = util.Counter()
 
@@ -33,7 +36,7 @@ class NNClassifier:
             accurate = self.howAccurate(testLabels, predictions)
             # print("Predicted: " + repr(predict) + " Actual: " + repr(testLabels[x]))
 
-        print("Accuracy: " + repr(accurate) + "%")
+        print("Accuracy based on testLabels & predictions: " + repr(accurate) + "%")
 
     def EuclideanDistance(self, dataOne, dataTwo, length):
         distance = 0
@@ -74,9 +77,42 @@ class NNClassifier:
         return sortedLabels[0][0]
 
     def howAccurate(self, testLabels, predictions):
+
         correct = 0
         for x in range(len(predictions)):
             if testLabels[x] == predictions[x]:
                 correct += 1
 
         return (correct / float(len(testLabels))) * 100
+
+    def classify(self, testData):
+
+        guesses = []
+        self.posteriors = []
+        for datum in testData:
+            posterior = self.calculateLogJointProbabilities(datum)
+            guesses.append(posterior.argMax())
+            self.posteriors.append(posterior)
+        return guesses
+
+    def calculateLogJointProbabilities(self, datum):
+        logJoint = util.Counter()
+        priorDist = util.Counter()
+        condProb = {0: util.Counter(), 1: util.Counter()}
+
+        for label in self.legalLabels:
+            logJoint[label] = math.log(self.priorDist[label])
+            for feature, value in datum.items():
+                try:
+                    if value > 0:
+                        logJoint[label] += math.log(self.condProb[1][feature, label])
+                        logJoint[label] += math.log(1 - self.condProb[0][feature, label])
+                    else:
+                        logJoint[label] += math.log(self.condProb[0][feature, label])
+                        logJoint[label] += math.log(1 - self.condProb[1][feature, label])
+                except:
+                    print(self.condProb[1][feature, label])
+                    print(self.condProb[0][feature, label])
+                    util.raiseNotDefined()
+
+        return logJoint
