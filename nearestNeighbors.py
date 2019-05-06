@@ -31,7 +31,7 @@ class NNClassifier:
             predict = self.getPredictions(neighbors)
             predictions.append(predict)
             accurate = self.howAccurate(testLabels, predictions)
-            print("Predicted: " + repr(predict) + " Actual: " + repr(testLabels[x]))
+            # print("Predicted: " + repr(predict) + " Actual: " + repr(testLabels[x]))
 
         print("Accuracy: " + repr(accurate) + "%")
 

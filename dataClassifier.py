@@ -380,15 +380,15 @@ def runClassifier(args, options):
                 # Conduct training and testing
                 start = time.time()
                 print("(" + str(runCount) + ")", "Training", numSubTraining, "points ...")
-                classifier.train(subTrainingData, subTrainingLabels, validationData, validationLabels)
+                if options.classifier == 'nearestNeighbors':
+                    classifier.train(trainingData, trainingLabels, testData, testLabels, options.k_number_of_neighbors)
+                else:
+                    classifier.train(subTrainingData, subTrainingLabels, validationData, validationLabels)
                 end = time.time()
                 elapsed = end - start
                 print("Elapsed Time:", elapsed)
                 aTime.append(elapsed)
-                # print("("+str(runCount)+")", "Validating...")
-                # guesses = classifier.classify(validationData)
-                # correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
-                # print(str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels)))
+
                 print("(" + str(runCount) + ")", "Testing...")
                 guesses = classifier.classify(testData)
                 correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
