@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a4160976-818d-48a7-a5bf-8c1e7f9f777d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataClassifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataClassifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/samples.py" beforeDir="false" afterPath="$PROJECT_DIR$/samples.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/naiveBayes.py" beforeDir="false" afterPath="$PROJECT_DIR$/naiveBayes.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,24 +13,24 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nearestNeighbors.py">
+        <entry file="file://$PROJECT_DIR$/dataClassifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+            <state relative-caret-position="20">
+              <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
               <folding>
-                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#518#537#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dataClassifier.py">
+        <entry file="file://$PROJECT_DIR$/naiveBayes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="64">
-              <caret line="387" column="35" lean-forward="true" selection-start-line="387" selection-start-column="35" selection-end-line="387" selection-end-column="35" />
+            <state relative-caret-position="142">
+              <caret line="146" selection-start-line="146" selection-end-line="146" />
               <folding>
-                <element signature="e#518#537#0" expanded="true" />
+                <element signature="e#417#428#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -67,10 +65,10 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/util.py" />
         <option value="$PROJECT_DIR$/perceptron.py" />
-        <option value="$PROJECT_DIR$/naiveBayes.py" />
         <option value="$PROJECT_DIR$/nearestNeighbors.py" />
         <option value="$PROJECT_DIR$/samples.py" />
         <option value="$PROJECT_DIR$/dataClassifier.py" />
+        <option value="$PROJECT_DIR$/naiveBayes.py" />
       </list>
     </option>
   </component>
@@ -131,13 +129,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="652" y="23" width="788" height="792" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49910232" visible="true" weight="0.03911343" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49910232" visible="true" weight="0.17209908" />
       <window_info id="Structure" order="1" sideWeight="0.50179213" side_tool="true" weight="0.17992178" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.9128571" />
+      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.32428572" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -220,26 +219,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/naiveBayes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-          <folding>
-            <element signature="e#417#428#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/perceptron.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1434">
-          <caret line="98" column="26" lean-forward="true" selection-start-line="98" selection-start-column="26" selection-end-line="98" selection-end-column="26" />
-          <folding>
-            <element signature="e#445#460#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/samples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2220">
@@ -257,12 +236,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/perceptron.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-438">
+          <caret line="42" column="20" lean-forward="true" selection-start-line="42" selection-start-column="20" selection-end-line="42" selection-end-column="20" />
+          <folding>
+            <element signature="e#445#460#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dataClassifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="64">
-          <caret line="387" column="35" lean-forward="true" selection-start-line="387" selection-start-column="35" selection-end-line="387" selection-end-column="35" />
+        <state relative-caret-position="20">
+          <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
           <folding>
             <element signature="e#518#537#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/naiveBayes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="146" selection-start-line="146" selection-end-line="146" />
+          <folding>
+            <element signature="e#417#428#0" expanded="true" />
           </folding>
         </state>
       </provider>

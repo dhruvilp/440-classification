@@ -63,89 +63,59 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     self.legalLabels.
     """
 
-        global highestPP, highestCP
-        "*** YOUR CODE HERE ***"
-        # Define Prior Probabilities:
-        """
-        Estimating P(Y) directly from the training data: P(Y) = c(y)/n
-        Where c(y) = # of training instances with label y and n = total # of training instances.
-        """
-        prior_prob = util.Counter()
+        priorDist = util.Counter()
 
-        """
-        y: P(F_i | Y = y)
-        P(F_i = f_i | Y = y) = c(f_i, y) / Sum(f_i \in {0,1})(f'_i, y)
-        where c(f_i, y) = # of times pixel F_i took value f_i in the training examples of label y.
-        """
-        # Define conditional probabilities:
-        cond_prob = util.Counter()
+        condProb = {0: util.Counter(), 1: util.Counter()}
+        # condProb = util.Counter() # conditional probability of features (feature, value):(count)
+        count = util.Counter()  # number of time feature seen (feature, value):(count)
 
-        # Define frequencies for conditional probabilities:
-        freq_cond_prob = util.Counter()  # num of time features seen
-
-        # Calculate prior probabilities:
-        for label in trainingLabels:
-            prior_prob[label] = prior_prob[label] + 1
-
-        # Normalize:
-        prior_prob.normalize()
-
-        # To find conditional probabilities (Training):
-        for i in range(0, len(trainingData)):
+        # Training
+        for i in range(len(trainingData)):
             datum = trainingData[i]
             label = trainingLabels[i]
-            for pixel, value in datum.items():
-                freq_cond_prob[(pixel, label)] = freq_cond_prob[(pixel, label)] + 1
-                if value == 1:
-                    cond_prob[(pixel, label)] = cond_prob[(pixel, label)] + 1
+            priorDist[label] += 1
+            for feat, val in datum.items():
+                count[(feat, label)] += 1
+                if val > 0:
+                    condProb[1][(feat, label)] += 1
+                else:
+                    condProb[0][(feat, label)] += 1
 
-        highest = 0
+        priorDist.normalize()
+        self.priorDist = priorDist
 
-        # Tuning with LaPlace Smoothing (Tuning)
+        bestAccuracy = -1
         for k in kgrid:
-            # Keep track of conditional probabilities and frequencies
-            k_cond_prob = util.Counter()
-            k_freq = util.Counter()
+            # smoothing:
+            smoothCondProb = {0: condProb[0].copy(), 1: condProb[1].copy()}
+            smoothCount = count.copy()
 
-            # Plugging in for a new computation from previous values
-            for pixelANDlabel, value in cond_prob.items():
-                k_cond_prob[pixelANDlabel] = value
+            for label in self.legalLabels:
+                for feat in self.features:
+                    smoothCondProb[0][(feat, label)] += k
+                    smoothCondProb[1][(feat, label)] += k
+                    smoothCount[(feat, label)] += 2 * k
 
-            for pixelANDlabel, value in freq_cond_prob.items():
-                k_freq[pixelANDlabel] = value
+            # normalizing:
+            for fkey, cnt in smoothCondProb[0].items():
+                smoothCondProb[0][fkey] = (cnt * 1.0) / smoothCount[fkey]
+            for fkey, cnt in smoothCondProb[1].items():
+                smoothCondProb[1][fkey] = (cnt * 1.0) / smoothCount[fkey]
 
-            # Adding k value
-            for pixel in self.features:
-                for label in self.legalLabels:
-                    k_cond_prob[(pixel, label)] = k_cond_prob[(pixel, label)] + k
-                    k_freq[(pixel, label)] = k_freq[(pixel, label)] + k
+            self.condProb = smoothCondProb
 
-            for i, j in k_cond_prob.items():
-                k_cond_prob[i] = float(j) / k_freq[i]
+            if self.extra:
+                # evaluating performance on validation set
+                guess = self.classify(validationData)
+                accuracyCount = [guess[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
+                print("k=", k, " accuracy:", (100.0 * accuracyCount / len(validationLabels)))
 
-            self.CP = k_cond_prob.copy()
-            self.PP = prior_prob.copy()
+                if accuracyCount > bestAccuracy:
+                    bestParam = (smoothCondProb, k)
+                    bestAccuracy = accuracyCount
 
-            # Starting the Classification:
-            correct_predictions = 0
-            predictions = self.classify(validationData)
-
-            for i in range(0, len(validationData)):
-                if validationLabels[i] == predictions[i]:
-                    correct_predictions = correct_predictions + 1
-
-            # evaluating performance on validation set
-            percentage = (float(correct_predictions) / len(validationLabels)) * 100
-
-            print("k = ", k, " accuracy is: ", percentage, "%")
-
-            if percentage > highest:
-                highest = percentage
-                highestPP = self.PP.copy()
-                highestCP = self.CP.copy()
-
-        self.PP = highestPP.copy()
-        self.CP = highestCP.copy()
+        if self.extra:
+            self.condProb, self.k = bestParam
 
     def classify(self, testData):
         """
@@ -173,15 +143,20 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         logJoint = util.Counter()
 
         "*** YOUR CODE HERE ***"
-        for i in self.legalLabels:
-            logJoint[i] = math.log(self.PP[i])
-            for pixel, value in datum.items():
-                if value == 0:
-                    probability = 1 - self.CP[(pixel, i)]
-                    logJoint[i] = logJoint[i] + math.log(probability if probability > 0 else 1)
-                else:
-                    "if value != 0 --> add"
-                    logJoint[i] = logJoint[i] + math.log(self.CP[(pixel, i)])
+        for label in self.legalLabels:
+            logJoint[label] = math.log(self.priorDist[label])
+            for feature, value in datum.items():
+                try:
+                    if value > 0:
+                        logJoint[label] += math.log(self.condProb[1][feature, label])
+                        logJoint[label] += math.log(1 - self.condProb[0][feature, label])
+                    else:
+                        logJoint[label] += math.log(self.condProb[0][feature, label])
+                        logJoint[label] += math.log(1 - self.condProb[1][feature, label])
+                except:
+                    print(self.condProb[1][feature, label])
+                    print(self.condProb[0][feature, label])
+                    util.raiseNotDefined()
 
         return logJoint
 
