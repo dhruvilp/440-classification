@@ -421,8 +421,7 @@ def runClassifier(args, options):
         numTest = options.test
 
         if options.data == "faces":
-            rawTrainingData = samples.loadDataFile("facedata/facedatatrain", numTraining, FACE_DATUM_WIDTH,
-                                                   FACE_DATUM_HEIGHT)
+            rawTrainingData = samples.loadDataFile("facedata/facedatatrain", numTraining, FACE_DATUM_WIDTH, FACE_DATUM_HEIGHT)
             trainingLabels = samples.loadLabelsFile("facedata/facedatatrainlabels", numTraining)
             rawValidationData = samples.loadDataFile("facedata/facedatatrain", numTest, FACE_DATUM_WIDTH, FACE_DATUM_HEIGHT)
             validationLabels = samples.loadLabelsFile("facedata/facedatatrainlabels", numTest)
